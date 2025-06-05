@@ -1,0 +1,108 @@
+interface GigabitEthernet0/1.10
+ encapsulation dot1Q 10
+ ip address 192.168.10.2 255.255.255.0
+ standby 10 ip 192.168.10.1
+ standby 10 priority 150
+ standby 10 preempt
+ip helper-address 1.1.1.2
+ no shutdown
+
+
+
+interface GigabitEthernet0/1.20
+ encapsulation dot1Q 20
+ ip address 192.168.20.2 255.255.255.0
+ standby 20 ip 192.168.20.1
+ip helper-address 2.2.2.2
+ no shutdown
+
+-----------------------------------------------
+
+interface GigabitEthernet0/1.20
+ encapsulation dot1Q 20
+ ip address 192.168.20.2 255.255.255.0
+ standby 20 ip 192.168.20.1
+ standby 20 priority 150
+ standby 20 preempt
+ip helper-address 2.2.2.2
+ no shutdown
+
+
+interface GigabitEthernet0/1.10
+ encapsulation dot1Q 10
+ ip address 192.168.10.2 255.255.255.0
+ standby 10 ip 192.168.10.1
+ip helper-address 1.1.1.2
+ no shutdown
+
+
+-----------------------------
+
+R3:
+ip route 0.0.0.0 0.0.0.0 1.1.1.1
+ip route 0.0.0.0 0.0.0.0 2.2.2.1
+
+r1
+ip route 0.0.0.0 0.0.0.0 1.1.1.2
+
+r2
+ip route 0.0.0.0 0.0.0.0 2.2.2.2
+
+
+-----------------------------
+vl 10
+name VENTAS
+vl 20
+name TI
+exit
+
+int f0/1
+sw mo acc
+sw acc vl 10
+
+int f0/2
+sw mo acc
+sw acc vl 20
+
+-------------------
+int f0/3
+sw mo tr
+sw tr allowed vl 10,20
+
+int f0/5
+sw mo tr
+sw tr allowed vl 10,20
+
+int f0/7
+sw mo tr
+sw tr allowed vl 10,20
+
+int g0/1
+sw mo tr
+sw tr allowed vl 10,20
+
+----------------------
+ip dhcp excluded-address 192.168.10.1 192.168.10.149
+
+ip dhcp excluded-address 192.168.20.1 192.168.20.149
+
+ip dhcp pool VLAN-10
+network 192.168.10.0 255.255.255.0
+default-router 192.168.10.1
+dns-server 8.8.8.8
+exit
+
+ip dhcp pool VLAN-20
+network 192.168.20.0 255.255.255.0
+default-router 192.168.20.1
+dns-server 8.8.8.8
+exit
+
+--------------
+
+int g0/1.10
+ip helper-address 1.1.1.2
+
+
+int g0/1.20
+ip helper-address 2.2.2.2
