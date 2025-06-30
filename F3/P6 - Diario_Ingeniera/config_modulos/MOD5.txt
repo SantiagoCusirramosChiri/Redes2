@@ -1,0 +1,39 @@
+enable
+configure terminal
+
+hostname MOD5
+
+! VLAN
+vlan 50
+ name MOD5
+
+! INTERFAZ DE ACCESO (ejemplo en Fa0/1)
+interface FastEthernet0/1
+ switchport mode access
+ switchport access vlan 50
+ no shutdown
+
+! TRONCALES (por ejemplo Fa0/2 y Fa0/3)
+interface FastEthernet0/2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ no shutdown
+
+interface FastEthernet0/3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ no shutdown
+
+! CONTRASEÑAS
+enable secret cisco
+line console 0
+ password red
+ login
+ exit
+line vty 0 4
+ password red
+ login
+ exit
+
+end
+write memory
