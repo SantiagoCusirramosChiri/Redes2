@@ -1,0 +1,52 @@
+enable
+configure terminal
+
+interface vlan 1
+ no nameif
+ no ip address
+ shutdown
+exit
+
+interface vlan 2
+ no nameif
+ no ip address
+ shutdown
+exit
+
+interface ethernet0/0
+ switchport access vlan 33
+ no shutdown
+exit
+
+interface ethernet0/1
+ switchport access vlan 33
+ no shutdown
+exit
+
+interface ethernet0/2
+ switchport access vlan 2
+ no shutdown
+exit
+
+interface vlan 33
+ nameif inside
+ security-level 100
+ ip address 172.16.33.1 255.255.255.252
+ no shutdown
+exit
+
+interface vlan 2
+ nameif outside
+ security-level 0
+ ip address 200.1.1.1 255.255.255.0
+ no shutdown
+exit
+
+route outside 0.0.0.0 0.0.0.0 200.1.1.254
+
+nat (inside,outside) dynamic interface
+
+access-list INSIDE_OUT extended permit ip any any
+access-group INSIDE_OUT in interface inside
+
+write memory
